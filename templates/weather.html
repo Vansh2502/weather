@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Search</title>
+</head>
+<body>
+
+<h2>Weather Information</h2>
+
+<form method="POST">
+    Enter City:
+    <input type="text" name="city" required>
+    <input type="submit" value="Search">
+</form>
+
+<br>
+
+{% if weather %}
+
+    {% if weather.error %}
+        <h3>{{ weather.error }}</h3>
+
+    {% else %}
+        <h3>Weather Details</h3>
+
+        <p><b>City:</b> {{ weather.city }}</p>
+        <p><b>Temperature:</b> {{ weather.temperature }} °C</p>
+        <p><b>Humidity:</b> {{ weather.humidity }}%</p>
+        <p><b>Description:</b> {{ weather.description }}</p>
+
+    {% endif %}
+
+{% endif %}
+
+</body>
+</html>
