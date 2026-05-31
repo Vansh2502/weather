@@ -1,32 +1,17 @@
 from flask import Flask
 
-from controllers.user_controller import (
-    signup,
-    login,
-    weather
+from backend.controllers.user_controller import (
+    user_bp
 )
 
-app = Flask(__name__)
-
-app.add_url_rule(
-    "/signup",
-    "signup",
-    signup,
-    methods=["GET", "POST"]
+app = Flask(
+    __name__,
+    template_folder="frontend/templates",
+    static_folder="frontend/static"
 )
 
-app.add_url_rule(
-    "/login",
-    "login",
-    login,
-    methods=["GET", "POST"]
-)
-
-app.add_url_rule(
-    "/weather",
-    "weather",
-    weather,
-    methods=["GET", "POST"]
+app.register_blueprint(
+    user_bp
 )
 
 if __name__ == "__main__":
