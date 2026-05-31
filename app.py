@@ -9,7 +9,7 @@ app = Flask(
     template_folder="frontend/templates",
     static_folder="frontend/static"
 )
-
+app.secret_key = "my_secret_key"
 app.register_blueprint(
     user_bp
 )

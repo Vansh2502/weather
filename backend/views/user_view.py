@@ -2,10 +2,21 @@ from flask import (
     render_template,
     request,
     redirect,
-    url_for
+    url_for,
+    session
 )
 
 import requests
+import jwt
+
+from datetime import (
+    datetime,
+    timedelta
+)
+
+from config import (
+    SECRET_KEY
+)
 
 from backend.models.user_model import (
     UserModel
@@ -56,18 +67,62 @@ def login():
 
         if user:
 
-            return redirect(
-                url_for("user.weather")
+            token = jwt.encode(
+
+                {
+                    "username": username,
+
+                    "exp":
+                    datetime.utcnow()
+                    +
+                    timedelta(hours=1)
+
+                },
+
+                SECRET_KEY,
+
+                algorithm="HS256"
             )
 
-        return "Invalid Username or Password"
+            session["token"] = token
+
+            return redirect(
+                url_for(
+                    "user.weather"
+                )
+            )
+
+        return "Invalid Login"
 
     return render_template(
         "login.html"
     )
-
-
 def weather():
+
+    token = session.get(
+        "token"
+    )
+
+    if not token:
+
+        return "Unauthorized"
+
+    try:
+
+        jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=["HS256"]
+        )
+
+    except:
+
+        session.pop(
+            "token",
+            None
+        )
+
+        return "Session Expired"
 
     weather_data = None
 
@@ -119,3 +174,18 @@ def weather():
         "weather.html",
         weather=weather_data
     )
+def verify_token(token):
+
+    try:
+
+        data=jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=["HS256"]
+        )
+
+        return data
+
+    except:
+
+        return None
